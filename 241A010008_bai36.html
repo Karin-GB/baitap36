@@ -63,6 +63,7 @@
       position: relative;
       overflow: hidden;
       box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      cursor: ew-resize;
     }
 
     #basket {
@@ -74,6 +75,7 @@
       position: absolute;
       bottom: 10px;
       left: 205px;
+      pointer-events: none;
     }
 
     #apple {
@@ -86,6 +88,7 @@
       left: 235px;
       display: none;
       box-shadow: inset -4px -4px 0 rgba(0, 0, 0, 0.15);
+      pointer-events: none;
     }
 
     #apple::before {
@@ -111,6 +114,7 @@
       font-size: 32px;
       font-weight: bold;
       gap: 10px;
+      cursor: default;
     }
 
     #game-over span {
@@ -167,15 +171,13 @@
       apple.style.top = appleY + "px";
     }
 
-    document.addEventListener("keydown", (e) => {
+    // Điều khiển giỏ bằng chuột (di chuyển mượt theo con trỏ)
+    gameContainer.addEventListener("mousemove", (e) => {
       if (!isPlaying) return;
-      const step = 25;
 
-      if (e.key === "ArrowLeft") {
-        basketX = Math.max(0, basketX - step);
-      } else if (e.key === "ArrowRight") {
-        basketX = Math.min(CONTAINER_WIDTH - BASKET_WIDTH, basketX + step);
-      }
+      const rect = gameContainer.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left - BASKET_WIDTH / 2;
+      basketX = Math.max(0, Math.min(CONTAINER_WIDTH - BASKET_WIDTH, mouseX));
       basket.style.left = basketX + "px";
     });
 
@@ -198,7 +200,6 @@
         appleSpeed += 0.3;
         resetApple();
       } else if (appleY + APPLE_SIZE >= CONTAINER_HEIGHT) {
-
         lives -= 1;
         livesEl.textContent = lives;
 
